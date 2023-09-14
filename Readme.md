@@ -11,3 +11,19 @@
    | path        | path modules includes method to deal `file path`                                         |
    | fs          | includes method classes and events to work with file I/O                                 |
    | util        | util module includes utility functions useful for programmers.                           |
+-  `Local Module`: The module which we create and export or import.
+-  `Third Party Module`: Third party modules are third party packages that we
+   install to complete any specific task.
+
+# Create a Simple http server :
+
+-  require `http` from 'http'
+-  http contains an function `createServer`.
+-  `createServer` server receive a function as `parameter`.
+-  Create server has two parameter like `(req, res)`
+-  Then listen the server on a port.
+-  Example: 
+- ```js
+
+
+   ```

@@ -1,47 +1,33 @@
-// const http = require("http");
-// const _ = require("underscore");
-// const server = http.createServer((req, res) => {
-//    res.writeHead(200, { "content-type": "application/json" });
-//    const userList = [
-//       {
-//          id: 1,
-//          name: "mostafizur rahaman",
-//          email: "mostafizur@gmail.com",
-//       },
-//       {
-//          id: 2,
-//          name: "mostafizur rahaman",
-//          email: "mostafizur@gmail.com",
-//       },
-//       {
-//          id: 3,
-//          name: "mostafizur rahaman",
-//          email: "mostafizur@gmail.com",
-//       },
-//       {
-//          id: 4,
-//          name: "mostafizur rahaman",
-//          email: "mostafizur@gmail.com",
-//       },
-//    ];
-
-//    const newUserList = _.map(userList, function (i) {
-//       return { id: i.id, name: i.name };
-//    });
-//    res.write(JSON.stringify(newUserList));
-
-//    res.end();
-// });
-
-// server.listen(5000, () => console.log("server is running on 5000"));
-
+//  require http modules :
 const http = require("http");
+
+//  define a port :
 const port = 5000;
 
+// create a server :
 const server = http.createServer((req, res) => {
-   res.end("server is running ");
+   console.log(req.url);
+   if (req.url === "/") {
+      res.writeHead(200, { "Content-Type": "text/html" });
+
+      res.end();
+   } else if (req.url === "/contact") {
+      res.writeHead(200, { "Content-Type": "text/html" });
+      res.write("<h1>Contact Us Page</h1>");
+      res.end();
+   } else {
+      res.writeHead(401, { "Content-Type": "application/json" });
+      res.write(
+         JSON.stringify({
+            resut: "Data now found for your routes",
+            success: false,
+         })
+      );
+      res.end();
+   }
 });
 
+//  listen the server:
 server.listen(port, () => {
    console.log("server is running now port : 5000");
 });

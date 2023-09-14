@@ -22,8 +22,18 @@
 -  `createServer` server receive a function as `parameter`.
 -  Create server has two parameter like `(req, res)`
 -  Then listen the server on a port.
--  Example: 
-- ```js
+-  Example:
+-  ```js
+   const http = require("http");
+   const port = 5000;
+   const http = require("http");
+   const port = 5000;
 
+   const server = http.createServer((req, res) => {
+      res.end("server is running ");
+   });
 
+   server.listen(port, () => {
+      console.log("server is running now port : 5000");
+   });
    ```

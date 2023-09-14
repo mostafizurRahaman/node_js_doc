@@ -1,9 +1,9 @@
-const colors = require("colors");
+// const colors = require("colors");
 
 //?START
 console.log("mostaifizur rahaman");
 setTimeout(() => {
-   console.log("ami mostafiz async".yellow);
+   console.log("ami mostafiz async");
 }, 2000);
 console.log("Ratul hossain");
 

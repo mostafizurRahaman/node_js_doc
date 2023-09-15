@@ -1,33 +1,37 @@
-//  require http modules :
+//  require http:
 const http = require("http");
+const { friendsList } = require("./uderscore");
 
-//  define a port :
+// port:
 const port = 5000;
 
-// create a server :
-const server = http.createServer((req, res) => {
-   console.log(req.url);
-   if (req.url === "/") {
-      res.writeHead(200, { "Content-Type": "text/html" });
+// underscore js:  - import from 'underscore.js' module .
+console.log(friendsList);
 
+//  create server :
+
+const server = http.createServer((req, res) => {
+   const url = req.url;
+   if (url === "/") {
+      res.writeHead(200, { "content-type": "text/html" });
+      res.write("<h1>Home page </h1>");
       res.end();
-   } else if (req.url === "/contact") {
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.write("<h1>Contact Us Page</h1>");
+   } else if (url === "/contact") {
+      res.writeHead(200, { "content-type": "text/html" });
+      res.write("<p>Contact us page</p>");
+      res.end();
+   } else if (url === "/users") {
+      const users = [];
+      res.writeHead(200, { "content-type": "application/json" });
+      res.write(JSON.stringify([{ id: 1, name: "Mostafizur Rahaman" }]));
       res.end();
    } else {
-      res.writeHead(401, { "Content-Type": "application/json" });
-      res.write(
-         JSON.stringify({
-            resut: "Data now found for your routes",
-            success: false,
-         })
-      );
+      res.writeHead(200, { "content-type": "application/json" });
+      res.write(JSON.stringify({ reslut: "Your are an unauthorized user" }));
       res.end();
    }
 });
 
-//  listen the server:
-server.listen(port, () => {
-   console.log("server is running now port : 5000");
-});
+//  listen the server :
+
+server.listen(port, () => console.log("server is running on " + port));

@@ -64,3 +64,57 @@
 | `res.write()`     | `req.write()` helps to write response. `req.write()` return an `string`. If you want to send `object` or `array` . need to convert `string` with `JSON.stringify()` | `res.write("<p>Home Page.</p>");` <br/> `res.write(JSON.stringify({id: 1, name: 'javascript'}))` |
 | `res.end()`       | `req.end()` end the response.` After every request, we need to end the response. Otherwise the serer will be stack.                                                 | `res.end()`                                                                                      |
 
+# `url` module in node js :
+
+-  require `url` from `url` :
+   ```js
+   const url = require("url");
+   ```
+-  `url` object conatains some `function` and properties:
+
+   ```js
+
+   // prototype of url object :
+      {
+         Url: [Function: Url],
+         parse: [Function: urlParse],
+         resolve: [Function: urlResolve],
+         resolveObject: [Function: urlResolveObject],
+         format: [Function: urlFormat],
+         URL: [class URL] {
+            canParse: [Function: canParse],
+            createObjectURL: [Function: createObjectURL],
+            revokeObjectURL: [Function: revokeObjectURL]
+         },
+         URLSearchParams: [class URLSearchParams],
+         domainToASCII: [Function: domainToASCII],
+         domainToUnicode: [Function: domainToUnicode],
+         pathToFileURL: [Function: pathToFileURL],
+         fileURLToPath: [Function: fileURLToPath],
+         urlToHttpOptions: [Function: urlToHttpOptions]
+      }
+   ```
+
+-  Url properties Details :
+-  | Properties    | task                                                                                                                        | Example                               |
+   | ------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+   | `url.parse()` | - `url.parse()` has two parameter. - 1st parameter is `url string` -2nd parameter is `boolean` value for `parseQueryString` | ![URL Parse](./readme/url_module.jpg) |
+
+### `url.parse(url:string, parseQueryString: boolean)` return an object like below:
+
+```js
+ {
+         protocol: 'http:',
+         slashes: true,
+         auth: null,
+         host: 'locahost:5000',
+         port: '5000',
+         hostname: 'locahost',
+         hash: null,
+         search: '?name=mostafiz&age=21&id=1',
+         query: [Object: null prototype] { name: 'mostafiz', age: '21', id: '1' },
+         pathname: '/users',
+         path: '/users?name=mostafiz&age=21&id=1',
+         href: 'http://locahost:5000/users?name=mostafiz&age=21&id=1'
+      }
+```

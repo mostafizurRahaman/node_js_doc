@@ -118,3 +118,17 @@
          href: 'http://locahost:5000/users?name=mostafiz&age=21&id=1'
       }
 ```
+
+## `fs` modules in Node JS:
+
+-  to complete file operation in node js , we can use fs modules:
+-  Fs modules have some functions to read, write, delete and update file. They
+   should work `asynchronously` or `synchronously`.
+-  Fs function are :
+-  | Asynchronous function                           | Synchronous Func                           | work                            |
+   | ----------------------------------------------- | ------------------------------------------ | ------------------------------- |
+   | `fs.readFile(fileName, [options], callback)`    | `fs.readFileSync(fileName, [options])`     | to read files                   |
+   | `fs.writeFile(fileName, [options], callback)`   | `fs.readFileSync(fileName, [options])`     | to write files                  |
+   | `fs.rename(oldPathName, newPathName, callback)` | `fs.readFileSync(oldPathName,newPathName)` | to rename any files name        |
+   | `fs.exits(path, callback)`                      | `fs.exitsSync(path)`                       | to cheacking file exit or not ? |
+   | `fs.appendFile(file,data, [options], callback)` | `fs.appendFile(file, data, [options])`     | append data on file             |

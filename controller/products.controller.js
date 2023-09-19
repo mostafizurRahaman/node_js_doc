@@ -1,5 +1,40 @@
+const products = [
+   { id: 1, name: "tshirt" },
+   {
+      id: 2,
+      name: "shirt",
+   },
+   {
+      id: 3,
+      name: "gense",
+   },
+   {
+      id: 4,
+      name: "pollo tshirt",
+   },
+   {
+      id: 5,
+      name: "blesure",
+   },
+   {
+      id: 6,
+      name: "cort",
+   },
+   {
+      id: 7,
+      name: "sari",
+   },
+   {
+      id: 8,
+      name: "panjabi",
+   },
+   { id: 9, name: "potuya" },
+   { id: 10, name: "balis" },
+];
+
 module.exports.getProducts = (req, res, next) => {
-   res.send("I get my products");
+   const { limit } = req.query;
+   res.send(products.slice(0, limit));
 };
 
 module.exports.saveProducts = (req, res, next) => {

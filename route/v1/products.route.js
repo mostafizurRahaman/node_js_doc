@@ -1,10 +1,13 @@
 const express = require("express");
 const handleProduct = require("../../controller/products.controller");
+const viewCount = require("../../middleware/viewCount");
+// const limiter = require("../../middleware/mylimiter");
 //  define a router :
 const router = express.Router();
 
 //  define get api with router:
 
+// router.get("/", viewCount,limiter, handleProduct.getProducts);
 router.get("/", handleProduct.getProducts);
 /**
  * @api {get } /products All products

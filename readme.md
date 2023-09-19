@@ -60,7 +60,7 @@
 
    ```js
    router
-      .router("/")
+      .route("/")
       .get((req, res) => {
          res.send("products found ");
       })
@@ -94,7 +94,7 @@
 -  :file_folder:`utils` folder contains all nessary configuration like database
    connection, mailSenderFunction etc.
 
-##  :point_right: Handler UnExits API:
+## :point_right: Handler UnExits API:
 
 -  Some we can't have any api. But users can try to hit any api which is not
    exits.

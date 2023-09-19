@@ -155,9 +155,9 @@ const server = http.createServer((req, res) => {
    //    }
    // })
 
-   fs.appendFileSync("mydata.txt", "ami ami ami");
-   console.log("Oh all fs moudle function learnt");
-   res.end();
+   // fs.appendFileSync("mydata.txt", "ami ami ami");
+   // console.log("Oh all fs moudle function learnt");
+   // res.end();
 });
 
 // :listen the server :/

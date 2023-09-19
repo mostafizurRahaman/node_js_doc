@@ -300,3 +300,70 @@ fs.appendFile(
 fs.appendFileSync("mydata.txt", "ami ami ami");
 console.log("Oh all fs moudle function learnt");
 ```
+
+## Event In Node JS :
+
+-  Node Js worked with Event driven way.
+-  ### How to create an event in Node Js:
+
+   -  Require event from 'events'
+
+   ```js
+   const event = require("events");
+   ```
+
+   -  create an `instance` by using `event.EventEmitter()` with `new` keyword.
+
+   ```js
+   const eventEmitter = new event.EventEmitter();
+   ```
+
+   -  Create an event handler function : this function will execute when event
+      will file
+
+   ```js
+   const handleRead = () => {
+      console.log("event will be fire");
+   };
+   ```
+
+   -  Assign the events: By using `on` method we can assign an `event` with
+      `hanlder` function. If the `event` fire the `handlerfunc` executed.
+   -  `eventEmitter.on(eventName, handlerFunc)` have two parameter. `eventName`,
+      `handlerFunc`
+
+   ```js
+   eventEmitter.on("read", handleRead);
+   ```
+
+   -  Emit or Fire the Event with : `event.emit(eventName)` :
+
+   ```js
+   event.emit("read");
+   ```
+
+   -  Example:
+
+   ```js
+   const event = require("events");
+
+   //  create an event Emitter :
+   const eventEmitter = new event.EventEmitter();
+
+   //  create an event handler :
+   const handleWriteCode = () => {
+      console.log("Colo Node Js shiki and likhi");
+   };
+
+   const handleRead = () => {
+      console.log("learn the file that you created");
+   };
+
+   //  assign the handler into event :
+   eventEmitter.on("write", handleWriteCode);
+   eventEmitter.on("read", handleRead);
+
+   // emit or fire the event :
+   eventEmitter.emit("write");
+   eventEmitter.emit("read");
+   ```

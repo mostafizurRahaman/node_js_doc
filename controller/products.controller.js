@@ -38,9 +38,10 @@ module.exports.getProducts = (req, res, next) => {
 };
 
 module.exports.saveProducts = (req, res, next) => {
-   const { baseUrl, ip, headers, body, params, query } = req;
-   console.log(baseUrl, ip, headers, body, params, query);
-   res.send("I save a new products");
+   // const { baseUrl, ip, headers, body, params, query } = req;
+   // console.log(baseUrl, ip, headers, body, params, query);
+   const body = req.body;
+   res.send([...products, body]);
 };
 
 module.exports.updateProducts = (req, res, next) => {

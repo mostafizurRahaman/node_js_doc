@@ -301,3 +301,13 @@ router.post("/", saveProducts);
       res.send(products.slice(0, limit));
    };
    ```
+-  ## :pointer_right: body
+   -  we can access body by using `req.body` object.
+   ```js
+    module.exports.saveProducts = (req, res, next) => {
+         // const { baseUrl, ip, headers, body, params, query } = req;
+         // console.log(baseUrl, ip, headers, body, params, query);
+         const body = req.body;
+         res.send([...products, body]);
+      };
+   ```

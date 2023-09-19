@@ -106,3 +106,56 @@ app.all("*", (req, res) => {
    res.send("this api not exits");
 });
 ```
+
+# :wave: :file_folder:`Controler` Use Case:
+
+-  :file_folder: `Controler` folder contains all `handlerFunction` of apies:
+-  create a controller folder.
+-  Eveny :page_with_curl:`file` name be `filename.control.js`. it's a
+   convention.
+-  Every :page_with_curl:` controller file` contains some function related with
+   routes.
+-  we just define a `function` in controller folder and `export` the function.
+-  we also define multiple function in on controller file.
+-  every `controller function` have `three parameter` : `req`, `res`, `next`.
+
+```js
+const getProducts = (req, res, next) => {
+   res.send({ id: 1, name: "product1", id: 2, name: "product2" });
+};
+const saveProducts = (req, res, next) => {
+   res.send({ id: 1, name: "product1", id: 2, name: "product2" });
+};
+
+module.exports = { getproducts, saveProducts };
+```
+
+-  then we `import` the file on `route` folder `file` to `pass` as
+   `hanlderfunction`
+
+```js
+const express = require("express");
+const {
+   getProducts,
+   saveProducts,
+} = require("/controller/products.controller.js");
+
+const router = express.Router();
+
+router.get("/", getProducts);
+router.post("/", saveProducts);
+```
+
+# :wave: Middleware :
+
+-  An Express Application is an essentialy series of middleware functions calls.
+-  ## What is middleware :
+   -  A middleware is a function.
+   -  ##### Middleware has access of three things
+      -  request object(req)
+      -  response object(res)
+      -  the next middleware function. (next())
+   -  ##### A middleware function can do
+      -  send response directly
+      -  after completing task call the next middleware on stack.
+   -  ##### There are five types of middleware in Express JS.

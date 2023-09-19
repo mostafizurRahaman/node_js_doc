@@ -1,29 +1,28 @@
 const express = require("express");
-
+const handleProduct = require("../../controller/products.controller");
 //  define a router :
 const router = express.Router();
 
 //  define get api with router:
 
-router.get("/", (req, res) => {
-   res.send("products founded");
-});
+router.get("/", handleProduct.getProducts);
+/**
+ * @api {get } /products All products
+ * @apiDescription get all products
+ * @apiPermission all users
+ *
+ * @apiHeader  {String}  Authorization User_Access_token
+ * @apiQuery  {Number{1-}} [page=1] page list
+ * @apiQuery {Number{1-100}} [page={1-100}] products perpage
+ */
 
-router.post("/", (req, res) => {
-   res.send("product posted");
-});
+router.post("/", handleProduct.saveProducts);
 
-router.put("/", (req, res) => {
-   res.send("product updated");
-});
+router.put("/", handleProduct.updateProducts);
 
-router.patch("/", (req, res) => {
-   res.send("product patached");
-});
+router.patch("/", handleProduct.updateProducts);
 
-router.delete("/", (req, res) => {
-   res.send("product deleted");
-});
+router.delete("/", handleProduct.deleteProducts);
 
 //  all define router for products id :
 
@@ -31,17 +30,8 @@ router.delete("/", (req, res) => {
 
 router
    .route("/:id")
-   .get((req, res) => {
-      const { id } = req.params;
-      res.send(`get data for ${id}`);
-   })
-   .post((req, res) => {
-      const { id } = req.params;
-      res.send(`post data for ${id}`);
-   })
-   .delete((req, res) => {
-      const { id } = req.params;
-      res.send(`delete data for ${id}`);
-   });
+   .get(handleProduct.getProductsById)
+   .put(handleProduct.updateProductsById)
+   .delete(handleProduct.deleteProductsById);
 
 module.exports = router;

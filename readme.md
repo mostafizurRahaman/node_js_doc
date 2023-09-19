@@ -149,25 +149,25 @@ router.post("/", saveProducts);
 # :wave: Middleware :
 
 -  An Express Application is an essentialy series of middleware functions calls.
--  ## :pointer_right: What is middleware :
+-  ## :point_right: What is middleware :
 
    -  A middleware is a function.
-   -  ##### :pointer_right: Middleware has access of three things
+   -  ##### :point_right: Middleware has access of three things
       -  request object(req)
       -  response object(res)
       -  the next middleware function. (next())
-   -  ##### :pointer_right: A middleware function can do
+   -  ##### :point_right: A middleware function can do
       -  send response directly (সরাসরি রেসপন্স পাঠাতে পারে )
       -  after completing task call the next middleware on stack. (অথবা next()
          কে কল করে দিবে পরবর্তী middleware কে কাজ করার জন্য )
-   -  ##### :pointer_right: Generally we store our middleware file in middleware folder.
+   -  ##### :point_right: Generally we store our middleware file in middleware folder.
       -  create a :file_folder:`middleware` on `root folder`.
       -  create a ":page_with_curl:`file.js` for middleware file.
       -  write a function with three parameters `(req, res, next)`.
 
--  ## :pointer_right: There are five types of middleware in Express JS.
+-  ## :point_right: There are five types of middleware in Express JS.
 
-   -  ### :pointer_right: Build In Middleware: like `express.json()`.
+   -  ### :point_right: Build In Middleware: like `express.json()`.
 
       -  `express.json()` helps to receive `json data` from `req.body`;
       -  Build in middleware will be use with `app.use(middleware)` parameter
@@ -178,7 +178,7 @@ router.post("/", saveProducts);
       app.use(express.json());
       ```
 
-   -  ### :pointer_right: Application Label Middleware :
+   -  ### :point_right: Application Label Middleware :
 
       -  Create a :page_with_curl:`file.js` for middleware.
       -  Create a `function` with three parameters `(req, res, next)`.
@@ -211,17 +211,17 @@ router.post("/", saveProducts);
          app.use(viewCount);
          ```
 
-   -  ### :pointer_right: Router Level Middleware :
+   -  ### :point_right: Router Level Middleware :
       -  Router level middleware creation process like
          `Application level middleware`
-      -  ### :pointer_right: how to use router level middleware?
+      -  ### :point_right: how to use router level middleware?
       -  `pass` the middleware as parameter of `router.method()` before
          `controller function`.
       -  Example : -
       ```js
       router.get("/", viewCount, handleProduct.getProducts);
       ```
-   -  ### :pointer_right: Third Partty Middleware:
+   -  ### :point_right: Third Partty Middleware:
 
       -  Third Partty pacakage provide some middleware.
       -  we can use `third party middleware` as `application level middleware`
@@ -267,18 +267,37 @@ router.post("/", saveProducts);
       router.get("/", viewCount, limiter, handleProduct.getProducts);
       ```
 
-   -  ### :pointer_right: ERROR Handling Middleware:
+   -  ### :point_right: ERROR Handling Middleware:
       -
       -
 
 # :wave: API methods:
 
--  ##### :pointer_right: Get() : By using get method we can get data from database.
--  ##### :pointer_right: POST() : By using post method we can post data into database.
--  ##### :pointer_right: PUT() : By using PUT method , we can update data. If data not exit on
-   database, post the updated data.
--  ##### :pointer_right: PATCH() : Patch method works like PUT method. But if data not exit on
+-  ##### :point_right: Get() : GET DATA
+-  ##### :point_right: POST() : POST NEW DATA
+-  ##### :point_right: PUT() : If Found data , Replace Data. If data not found, Create new data.
+-  ##### :point_right: PATCH() : Modifies Data, If not found, doesn't do anyting.
+-  ##### :point_right: DELETE() : Delete data.
 
-   database, PATCH() can't do anything
+# :wave: `params`, `query` :
 
--  ##### :pointer_right: DELETE() : DELETE() helps to delete data from database.
+-  ## :point_right: in api route params represent by using `/:paramsName`
+   -  We can access `params` from `req.params` object.
+   ```js
+   module.exports.getProductsById = (req, res, next) => {
+      const { id } = req.params;
+      res.send("I get my products by " + id);
+   };
+   ```
+   -  From client side params send by using `baseUrl/path/paramsOne/paramsTwo`
+-  ## :point_right: query
+   -  From Client side query will be include after question mark `?` like
+      `baseURl/path?name=value&email=value&age=value`
+   -  We can send multiple query by seperating queries with `&` operator
+   -  We can access queries form `req.query` object.
+   ```js
+   module.exports.getProducts = (req, res, next) => {
+      const { limit } = req.query;
+      res.send(products.slice(0, limit));
+   };
+   ```

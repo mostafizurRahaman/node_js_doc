@@ -304,10 +304,114 @@ router.post("/", saveProducts);
 -  ## :pointer_right: body
    -  we can access body by using `req.body` object.
    ```js
-    module.exports.saveProducts = (req, res, next) => {
-         // const { baseUrl, ip, headers, body, params, query } = req;
-         // console.log(baseUrl, ip, headers, body, params, query);
-         const body = req.body;
-         res.send([...products, body]);
-      };
+   module.exports.saveProducts = (req, res, next) => {
+      // const { baseUrl, ip, headers, body, params, query } = req;
+      // console.log(baseUrl, ip, headers, body, params, query);
+      const body = req.body;
+      res.send([...products, body]);
+   };
+   ```
+
+# :wave: Static File serve in Express JS:
+
+-  Some time we need to `render html in server` or `server image form server` or
+   `send html from server.`
+-  There are many ways to send rendered html or send static html or static image
+   from server.
+-  #### `res.sendFile(__dirname +"./path" )`:;
+
+   ```js
+   app.get("/", (req, res) => {
+      res.sendFile(__dirname + "./public/profile.html");
+   });
+   ```
+
+-  #### `express.static("folder")` :
+   -  By using `express.static()` middleware, we can make a folder static.
+   -  After making static, we can find every file of the folder after
+      `baseUrl/filename`
+-  ### View Engine : like `ejs`
+
+   -  Install `ejs`:
+
+   ```JS
+      npm i ejs
+   ```
+
+   -  require ejs:
+
+   ```js
+   const ejs = require("ejs");
+   ```
+
+   -  `app.set('view engine', 'ejs')` call the method.
+
+   ```js
+   app.set("view engine", "ejs");
+   ```
+
+   -  create a :file_folde:`views` .
+   -  Create and html file `my.ejs` with `ejs syntax`.
+
+      ```ejs
+      <!DOCTYPE html>
+      <html lang="en">
+         <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title><%= id %></title>
+         </head>
+         <body>
+            <h1><%= id %></h1>
+         </body>
+      </html>
+
+      ```
+
+   -  Then Render the page and pass the dynamic values:
+   -  `res.render('/file_path/',{ id: 1 , user: { name: "Mostafizur Rahaman" } })`
+
+# Error Handler In Express JS :
+
+-  create `errorHandler` middleware with an `extra` parameter `error`.
+-  ` error` parameter receive the error
+
+```js
+module.exports.errorHandler = (err, req, res, next) => {
+   res.send(err.message);
+};
+```
+
+-  use the middleware before `app.listener` and after `all routes`.
+
+```js
+// here all route :point_top:
+app.use(errorHandler);
+//  here app.listen()
+```
+
+# IF express can not handled error we can use this `evnets`
+
+```js
+process.on("unhandledRejection", (error) => {
+   console.log(error.message, error.name);
+   app.close(() => {
+      process.exit(1);
+   });
+});
+```
+
+# :wave: Response format:
+
+-  1. First Format:
+   ```js
+   res.status(200).send({ success: true, message: "success", data: data });
+   ```
+-  2. Second Format:
+   ```js
+   res.status(200).send({ success: 1, message: "success", data: data });
+   ```
+-  3. For Error :
+   ```js
+   res.status(500).send({ success: false, message: "Itnernal server error" });
    ```

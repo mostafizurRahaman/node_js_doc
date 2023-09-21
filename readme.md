@@ -64,16 +64,19 @@ mongosh;
 
 -  ## Logical Operator:
 
-   | operator | syntax                       | description                                                                                                                         | example                                               |
-   | -------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-   | `$and`   | `{$and : [contion,contion]}` | `$and` operator contain a array of contidion . every condition will be object. it return data which matach with every conditions    | db.users.find({ $and: [ {name: 'M'}, {age: 20}]})     |
-   | `$or`    | `{$or : [contion,contion]}`  | `$and` operator contain a array of contidion . every condition will be object. it return data which matached with any one condition | db.users.find({$or: [{name: 'M'}, {age: {$lt: 10}}]}) |
-   | `$not`   | `{$or : [contion,contion]}`  | `$and` operator contain a array of contidion . every condition will be object. it return data which matached with any one condition | db.users.find({$or: [{name: 'M'}, {age: {$lt: 10}}]}) |
+   | operator | syntax                       | description                                                                                                                         | example                                                 |
+   | -------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+   | `$and`   | `{$and : [contion,contion]}` | `$and` operator contain a array of contidion . every condition will be object. it return data which matach with every conditions    | `db.users.find({ $and: [ {name: 'M'}, {age: 20}]})`     |
+   | `$or`    | `{$or : [contion,contion]}`  | `$and` operator contain a array of contidion . every condition will be object. it return data which matached with any one condition | `db.users.find({$or: [{name: 'M'}, {age: {$lt: 10}}]})` |
+   | `$not`   | `{$or : [contion,contion]}`  | `$and` operator contain a array of contidion . every condition will be object. it return data which matached with any one condition | `db.users.find({$or: [{name: 'M'}, {age: {$lt: 10}}]})` |
 
 -  ## Others Operator:
-   | operator | syntax                                     | description                                                                             | example                                               |
-   | -------- | ------------------------------------------ | --------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-   | `$exits` | `{property: {$exits: true}}`               | check a property isExists or not isExists and return data                               | db.users.find({age: {$exists: true}})                 |
-   | `$type`  | `{property : {$type: "datatype"}}`         | `$type` operator check data type. if data type matched of that return the matched data. | db.users.find({age: {$type: 'number'}})               |
-   | `$regex` | `{property : {$regex: regex}}`             | if any data matched with regex return                                                   | db.users.find({age: {$regex: /M/}})                   |
-   | `$expr`  | `{$expr: {$gt: ["$spend", "$haveMoney"]}}` | matched expression value will be return                                                 | db.users.find({$expr: {$lt: ["spend", "haveMoney"]}}) |
+   | operator | syntax                                     | description                                                                             | example                                                 |
+   | -------- | ------------------------------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+   | `$exits` | `{property: {$exits: true}}`               | check a property isExists or not isExists and return data                               | `db.users.find({age: {$exists: true}}) `                |
+   | `$type`  | `{property : {$type: "datatype"}}`         | `$type` operator check data type. if data type matched of that return the matched data. | `db.users.find({age: {$type: 'number'}}) `              |
+   | `$regex` | `{property : {$regex: regex}}`             | if any data matched with regex return                                                   | `db.users.find({age: {$regex: /M/}}) `                  |
+   | `$expr`  | `{$expr: {$gt: ["$spend", "$haveMoney"]}}` | matched expression value will be return                                                 | `db.users.find({$expr: {$lt: ["spend", "haveMoney"]}})` |
+
+
+

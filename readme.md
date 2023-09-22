@@ -34,6 +34,8 @@ mongosh;
 | `use databasename`               | create database                           |
 | `db.collectionname.insertOne()`  | insert one document on collection         |
 | `db.collectionname.insertMany()` | insert an array of document on collection |
+| `db.collectionname.updateOne()`  | insert an array of document on collection |
+| `db.collectionname.updateMany()` | insert an array of document on collection |
 
 # Find data :
 
@@ -80,15 +82,177 @@ mongosh;
    | `$expr`  | `{$expr: {$gt: ["$spend", "$haveMoney"]}}` | matched expression value will be return                                                 | `db.users.find({$expr: {$lt: ["spend", "haveMoney"]}})` |
 
 -  ## Update Operator : we can also use comperrsion and logical operator for query in updation or deletion.
+
    | operator   | syntax                               | description                                                                                                      | example                                                                                                          |
    | ---------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
    | `$set`     | `{ $set: { age: 21}}`                | `$set` operator helps to update `object.properties`                                                              | `db.users.updateOne({name: "M"}, {$set: {name: "Mostafiuzr rahaman"}}); `                                        |
    | `$unset`   | `{ $unset: { age: 21}}`              | `$unset` operator remove document properties.                                                                    | `db.users.updateOne({name: "M"}, {$unset: {age: ""}}); `                                                         |
-   | `$inc`     | ` {$inc: {age: 2}}`                  | `$inc` increment operator items when the query matched. By providing (-) `minus` vale we can decrement any value | `db.users.updateOne({age: {$lt: 10}}, {$inc: {age: 2}}); `                                                       |
+   | `$inc`     | `{$inc: {age: 2}}`                   | `$inc` increment operator items when the query matched. By providing (-) `minus` vale we can decrement any value | `db.users.updateOne({age: {$lt: 10}}, {$inc: {age: 2}}); `                                                       |
    | `$push`    | `{$push : {property: value}`         | `$push` push an element on array of any document.                                                                | `db.users.updateMany({age: {$gt: 5}}, {$push: {"skills": "JavaScript"}}) `                                       |
    | `$each`    | `{$push : { property: {$each: []}}}` | `$each` get array as value. `$each` operator helps us to push multiple items with `$push` in to array            | `db.users.updateMany({name: {$exists: true}}, {$push: { skills: {$each: ["React JS", "Next JS", "Node JS"]}}}) ` |
    | `$pull`    | `{$pull : {property: value}`         | `$pull` removes an item from array                                                                               | `db.users.updateMany({age: {$gt: 5}}, {$pull: {"skills": "React"}})`                                             |
    | `$pullAll` | `{$pullAll : {property: value}`      | `$pullAll` removes or delete multiple items from array                                                           | `db.users.updateMany({name : {$exists: true}}, {$pullAll: {skills: ["React JS", "Next JS", "Node JS"]}})         |
 
+# Connect MongoDB with Express JS or Node JS:
 
-- 
+-  go to mongo db documentation and copy the code :
+
+```js
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const colors = require("colors");
+const uri = process.env.ATLAS_URI;
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+   serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+   },
+});
+
+let db;
+
+const connectToServer = async (callback) => {
+   try {
+      dbConnection = await client.connect();
+      db = dbConnection.db("tools");
+      console.log(colors.green("database connected Successfully"));
+      if (db) {
+         callback();
+      }
+   } catch (e) {
+      callback(err);
+   }
+};
+
+const getDb = () => {
+   return db;
+};
+
+module.exports = { connectToServer, getDb };
+```
+
+# MongoDB Driver Operation with Express Js :
+
+-  #### Get Request topics :
+
+   -  ##### Normal Get Operation :
+
+      -  `cursor` : Find the the from collection by using query it's called
+         `cursor` :
+         ```js
+         const db = getDb();
+         //  cursor :
+         const cursor = db.collection("tools").find();
+         ```
+      -  we need to convert cursor to array:
+      -  Mongo driver have two function to `toArray()` or `forEach()` convert
+         `cursor` to `array of data`:
+
+         ```js
+         module.exports.getProducts = async (req, res, next) => {
+            try {
+               const db = getDb();
+               //  cursor :
+               const cursor = db.collection("tools").find();
+               // we can find element by using toArray() or forEach():
+               const tools = await cursor.toArray();
+               res.status(200).send({
+                  success: true,
+                  message: "success",
+                  data: tools,
+               });
+            } catch (err) {
+               next(err);
+            }
+         };
+         ```
+
+   -  ##### projection with `find().project({propertyName: 0, propertyName: 1})` or `find({}, {projection: {propertyName: 0, propertyName: 1}})`:
+
+      -  we can get specific properties from database by using `projection` or
+         `project`.
+      -  We can do `projection` two ways. by using `project()` or `projection`.
+      -  0: means don't get the property
+      -  1: means get the property
+      -  ###### `project()`: project({propertyName: 1, propertyName: 0}) use after find() like `find().project({name: 0})`
+         ```js
+         const cursor = db
+            .collection("tools")
+            .find()
+            .project({ name: 1, _id: 0 });
+         ```
+      -  ###### `projection: {propertyName: 1, propertyname: 0}` : `projection` will be second parameter of `find({}, {projection: {name: 1, _id: 0}})`
+
+         ```js
+         const cursor = db
+            .collection("tools")
+            .find({}, { projection: { name: 1, _id: 0 } });
+         ```
+
+   -  ##### pagination: by using `skip()` and `limit()`
+      -  `skip()` and `limit()` method need to use after `find()`;
+      -  `skip()` method `skip()` some number of items.
+      -  `limit()` method only return fixed number of items.
+      -  `find().skip(page * limit).limit()` this format used for pagition in
+         Express js:
+         ```js
+         module.exports.getProducts = async (req, res, next) => {
+            try {
+               const db = getDb();
+               const { limit, page } = req.query;
+               //  cursor :
+               // const cursor = db
+               //    .collection("tools")
+               //    .find({}, { projection: { name: 1, _id: 0 } });
+               const cursor = db
+                  .collection("tools")
+                  .find({})
+                  .skip(+page * limit)
+                  .limit(+limit);
+               // we can find element by using toArray() or forEach():
+               const tools = await cursor.toArray();
+               res.status(200).send({
+                  success: true,
+                  message: "success",
+                  data: tools,
+               });
+            } catch (err) {
+               next(err);
+            }
+         };
+         ```
+
+-  # `ObjectId()` Validation with `ObjectId.isValid(id)`:
+
+   -  we can validate `_id` is `ObjectId` or `Not` by using .
+      ```js
+      const { id } = req.params;
+      if (!ObjectId.isValid(id)) {
+         return res
+            .status(401)
+            .send({ success: false, message: "enter a valid id" });
+      }
+      ```
+   -  Example:
+
+   ```js
+   module.exports.getProductsById = async (req, res, next) => {
+      const { id } = req.params;
+      if (!ObjectId.isValid(id)) {
+         return res
+            .status(400)
+            .send({ success: false, message: "enter a valid id" });
+      }
+      try {
+         const db = getDb();
+         const result = await db
+            .collection("tools")
+            .findOne({ _id: new ObjectId(id) });
+         res.send(result);
+      } catch (err) {
+         next(err);
+      }
+   };
+   ```

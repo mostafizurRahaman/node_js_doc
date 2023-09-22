@@ -1,6 +1,6 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const uri =
-   "mongodb+srv://<username>:<password>@cluster0.4nkvsmn.mongodb.net/?retryWrites=true&w=majority";
+const colors = require("colors");
+const uri = process.env.ATLAS_URI;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -10,23 +10,24 @@ const client = new MongoClient(uri, {
       deprecationErrors: true,
    },
 });
-let dbConnection;
 
-const connectToServer = function (callback) {
-   client.connect((err, db) => {
-      if (err) {
-         return callback(err);
+let db;
+
+const connectToServer = async (callback) => {
+   try {
+      dbConnection = await client.connect();
+      db = dbConnection.db("tools");
+      console.log(colors.green("database connected Successfully"));
+      if (db) {
+         callback();
       }
-
-      dbConnection = db.db("demo4");
-      console.log("Successfully connect to mongodb");
-
-      return callback();
-   });
+   } catch (e) {
+      callback(err);
+   }
 };
 
 const getDb = () => {
-   return dbConnection;
+   return db;
 };
 
 module.exports = { connectToServer, getDb };

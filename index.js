@@ -2,13 +2,14 @@ const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-
+const colors = require("colors");
 require("dotenv").config();
 const productsRoute = require("./route/v1/products.route");
 const viewCount = require("./middleware/viewCount");
 const ejs = require("ejs");
 const { errorHandler } = require("./middleware/errorHandler");
 const { connectToServer } = require("./utils/dbConnect");
+
 // const { default: rateLimit } = require("express-rate-limit");
 
 //  app route:
@@ -38,13 +39,13 @@ app.use("/api/v1/products", productsRoute);
 
 const port = process.env.PORT || 5000;
 
-connectToServer(function (err) {
+connectToServer((err) => {
    if (!err) {
       app.listen(port, () => {
-         console.log(`server is running on ${port}`);
+         console.log(colors.blue(`server is running on port : ${port}`));
       });
    } else {
-      console.log("database not connected now.");
+      console.log(`server is running on port : ${port}`);
    }
 });
 
@@ -66,15 +67,12 @@ app.get("/", (req, res) => {
    });
 });
 app.all("*", (req, res) => {
-   ``;
    res.send("The API routes not found");
 });
 
 app.use(errorHandler);
 
 process.on("unhandledRejection", (error) => {
-   console.log(error.message, error.name);
-   app.close(() => {
-      process.exit(1);
-   });
+   console.log(error.name, error.message);
+   app.close(() => process.exit(1));
 });

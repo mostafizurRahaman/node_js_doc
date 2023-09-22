@@ -20,12 +20,8 @@ router.get("/", handleProduct.getProducts);
  */
 
 router.post("/", handleProduct.saveProducts);
-
-router.put("/", handleProduct.updateProducts);
-
 router.patch("/", handleProduct.updateProducts);
 
-router.delete("/", handleProduct.deleteProducts);
 
 //  all define router for products id :
 

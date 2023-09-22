@@ -37,15 +37,15 @@ mongosh;
 
 # Find data :
 
-| functions    | Find Type `db.collection.find()`          |                                                     | Example                                          |
-| ------------ | ----------------------------------------- | --------------------------------------------------- | ------------------------------------------------ |
-| find()       | `collection.find()`                       | show all document                                   |                                                  |
-| find()       | `collection.find(queryObject)`            | to find all data from collection                    | `db.collection.find({age: 20})`                  |
-| limit()      | `collection.find(queryObject).limit(20)`  | gives on limited data                               | `db.collection.find({age: 20}).limit(10)`        |
-| count()      | `collection.find().count()`               | return `document` length                            | `db.collection.find({age: 20}).limit(10)`        |
-| skip()       | `collection.find().skip(number)`          | `skip(number)` help to skip some documents          | `db.collection.find().skip(10 * page).limit(10)` |
-| sort()       | `collection.find().sort({key: -1})`       | we can sort data . `key` value will be `1` or `-1`. | `db.collection.find().sort({age: 1, name: -1})`  |
-| projection() | `collection.find().projection({key: -1})` | we can sort data . `key` value will be `1` or `-1`. | `db.collection.find().sort({age: 1, name: -1})`  |
+| functions    | Find Type `db.collection.find()`          |                                                     | Example                                             |
+| ------------ | ----------------------------------------- | --------------------------------------------------- | --------------------------------------------------- |
+| find()       | `collection.find()`                       | show all document                                   |                                                     |
+| find()       | `collection.find(queryObject)`            | to find all data from collection                    | `db.collection.find({age: 20})`                     |
+| limit()      | `collection.find(queryObject).limit(20)`  | gives on limited data                               | `db.collection.find({age: 20}).limit(10)`           |
+| count()      | `collection.find().count()`               | return `document` length                            | `db.collection.find({age: 20}).limit(10)`           |
+| skip()       | `collection.find().skip(number)`          | `skip(number)` help to skip some documents          | `db.collection.find().skip(10 * page).limit(10)`    |
+| sort()       | `collection.find().sort({key: -1})`       | we can sort data . `key` value will be `1` or `-1`. | `db.collection.find().sort({age: 1, name: -1})`     |
+| projection() | `collection.find().projection({key: -1})` | we can sort data . `key` value will be `1` or `-1`. | `db.collection.find().projection({age: 1, _id: 0})` |
 
 # Operator :
 
@@ -71,6 +71,7 @@ mongosh;
    | `$not`   | `{$or : [contion,contion]}`  | `$and` operator contain a array of contidion . every condition will be object. it return data which matached with any one condition | `db.users.find({$or: [{name: 'M'}, {age: {$lt: 10}}]})` |
 
 -  ## Others Operator:
+
    | operator | syntax                                     | description                                                                             | example                                                 |
    | -------- | ------------------------------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------- |
    | `$exits` | `{property: {$exits: true}}`               | check a property isExists or not isExists and return data                               | `db.users.find({age: {$exists: true}}) `                |
@@ -78,5 +79,16 @@ mongosh;
    | `$regex` | `{property : {$regex: regex}}`             | if any data matched with regex return                                                   | `db.users.find({age: {$regex: /M/}}) `                  |
    | `$expr`  | `{$expr: {$gt: ["$spend", "$haveMoney"]}}` | matched expression value will be return                                                 | `db.users.find({$expr: {$lt: ["spend", "haveMoney"]}})` |
 
+-  ## Update Operator : we can also use comperrsion and logical operator for query in updation or deletion.
+   | operator   | syntax                               | description                                                                                                      | example                                                                                                          |
+   | ---------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+   | `$set`     | `{ $set: { age: 21}}`                | `$set` operator helps to update `object.properties`                                                              | `db.users.updateOne({name: "M"}, {$set: {name: "Mostafiuzr rahaman"}}); `                                        |
+   | `$unset`   | `{ $unset: { age: 21}}`              | `$unset` operator remove document properties.                                                                    | `db.users.updateOne({name: "M"}, {$unset: {age: ""}}); `                                                         |
+   | `$inc`     | ` {$inc: {age: 2}}`                  | `$inc` increment operator items when the query matched. By providing (-) `minus` vale we can decrement any value | `db.users.updateOne({age: {$lt: 10}}, {$inc: {age: 2}}); `                                                       |
+   | `$push`    | `{$push : {property: value}`         | `$push` push an element on array of any document.                                                                | `db.users.updateMany({age: {$gt: 5}}, {$push: {"skills": "JavaScript"}}) `                                       |
+   | `$each`    | `{$push : { property: {$each: []}}}` | `$each` get array as value. `$each` operator helps us to push multiple items with `$push` in to array            | `db.users.updateMany({name: {$exists: true}}, {$push: { skills: {$each: ["React JS", "Next JS", "Node JS"]}}}) ` |
+   | `$pull`    | `{$pull : {property: value}`         | `$pull` removes an item from array                                                                               | `db.users.updateMany({age: {$gt: 5}}, {$pull: {"skills": "React"}})`                                             |
+   | `$pullAll` | `{$pullAll : {property: value}`      | `$pullAll` removes or delete multiple items from array                                                           | `db.users.updateMany({name : {$exists: true}}, {$pullAll: {skills: ["React JS", "Next JS", "Node JS"]}})         |
 
 
+- 

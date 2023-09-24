@@ -7,5 +7,7 @@ router
    .get(productController.getProducts)
    .post(productController.saveProduct);
 
+router.patch("/bulk-update", productController.bulkUpdateProductsByIds);
+
 router.route("/:id").patch(productController.updateProductById);
 module.exports = router;

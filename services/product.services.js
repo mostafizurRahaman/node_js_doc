@@ -34,3 +34,28 @@ module.exports.updateProductServices = async (id, data) => {
    const results = await product.set(data).save();
    return results;
 };
+
+// module.exports.bulkUdpateProductService = async (data) => {
+//    console.log(data);
+//    const products = await Product.updateMany(
+//       { _id: data.ids },
+//       { $set: data.data },
+//       {
+//          runValidators: true,
+//       }
+//    );
+//    return products;
+// };
+
+module.exports.bulkUdpateProductService = async (data) => {
+   console.log(data);
+   const products = [];
+   data.forEach((i) => {
+      products.push(
+         Product.updateOne({ _id: i._id }, { $set: { price: i.info.price } })
+      );
+   });
+
+   const results = await Promise.all(products);
+   return results;
+};

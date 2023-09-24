@@ -71,3 +71,25 @@ module.exports.updateProductById = async (req, res, next) => {
       });
    }
 };
+
+//  bulk - update by ids :
+
+exports.bulkUpdateProductsByIds = async (req, res, next) => {
+   try {
+      console.log(req.body);
+      const products = await productservices.bulkUdpateProductService(
+         req.body.data
+      );
+      res.status(200).send({
+         status: "success",
+         message: "products udpated successfully by me",
+         data: products,
+      });
+   } catch (err) {
+      res.status(400).send({
+         status: "failed",
+         message: err.message,
+         name: err.name,
+      });
+   }
+};

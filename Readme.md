@@ -456,3 +456,58 @@ const ProductSchema = mongoose.Schema({});
       ```
 
    -  ## `findOneAndUpdate()` and `findByIdAndUpdate()` : works like `updateOne()`
+
+# Bulk Udpate in Mongoose :
+
+-  ## `updateMany(filters, udpatedDoc, [options]}`
+
+   -  `filters` contains a properties array. or array of ids.
+   -  Example:
+
+   ```js
+   module.exports.bulkUdpateProductService = async (data) => {
+      console.log(data);
+      const products = await Product.updateMany(
+         { _id: data.ids },
+         { $set: data.data },
+         {
+            runValidators: true,
+         }
+      );
+      return products;
+   };
+   ```
+
+-  ## `Promise.all()` and `UpdateOne() ` combination for bulk update:
+
+   -  Access array of data which need to udpate from `req.body`.
+   -  `req.body` contains `_ids` and `updatedData`
+   -  then create an empty array.
+
+   ```js
+   const data = req.body;
+   const allPromises = [];
+   ```
+
+   -  Then apply for loop on `array of data` which we find from `req.body`.
+   -  for every `_id` update data by using
+      `updateOne({_id: i.id}, {$set: data.updatedData}, {runRevalidators: true})`
+      and push the promise to `allPromise` Array.
+   -  Atlast `resolve` the array of promises by using `Promise.all([])`.
+   -  it's return an array of values after updation.
+   -  Example :
+
+   ```js
+   module.exports.bulkUdpateProductService = async (data) => {
+      console.log(data);
+      const products = [];
+      data.forEach((i) => {
+         products.push(
+            Product.updateOne({ _id: i._id }, { $set: { price: i.info.price } })
+         );
+      });
+
+      const results = await Promise.all(products);
+      return results;
+   };
+   ```

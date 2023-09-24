@@ -87,6 +87,23 @@ const ProductSchema = mongoose.Schema(
    }
 );
 
+//   middleware:
+ProductSchema.pre("save", function (next) {
+   if (!this.quantity) {
+      this.status = "out-of-stock";
+   }
+   console.log("Before saved product", " ", this.name);
+   next();
+});
+
+ProductSchema.post("save", function (doc, next) {
+   console.log(`Product saved for ${doc._id}`);
+   next();
+});
+
+ProductSchema.methods.logger = function () {
+   console.log(`Data saved for ${this.name}`);
+};
 const supplierSchema = mongoose.Schema(
    {
       name: {
@@ -136,11 +153,11 @@ app.get("/", (req, res) => {
 app.post("/api/v1/product", async (req, res, next) => {
    try {
       const product = new Product(req.body);
-      if (product.quantity === 0) {
-         product.status = "out-of-stock";
-      }
+      // if (product.quantity === 0) {
+      //    product.status = "out-of-stock";
+      // }
       const results = await product.save();
-
+      results.logger();
       res.status(200).send({
          success: true,
          message: "Product saved successfully",

@@ -206,3 +206,76 @@ const ProductSchema = mongoose.Schema({});
       }
    });
    ```
+
+# Schema Midllewares:
+
+-  ## For save:
+
+   -  ### `SchemaName.pre('save', callback(next)) ` it work before saved data on database.
+
+      -  the callback function will be start with: `function` keyword. arrow
+         function not allow as parameter
+      -  callback function have paramete `next` to call the next `middleware`.
+      -  we need to access `this` here.
+      -  `this` represent data that we send from client side.
+      -  Example:
+
+      ```js
+      productSchema.pre("save", function (next) {
+         if (this.quantity === 0) {
+            this.status = "out-of-stock";
+         }
+      });
+      ```
+
+   -  ### `SchemaName.post('save', callback(doc, next)) ` it work before saved data on database.
+
+      -  the callback function will be start with: `function` keyword. arrow
+         function not allow as parameter
+      -  `doc` parameter represent the documents. a
+      -  `next` function used to call the next `middleware.`
+
+      -  Example:
+
+      ```js
+      ProductSchema.post("save", function (doc, next) {
+         console.log("product saved for ", doc._id);
+         next();
+      });
+      ```
+
+# Instence Method of Schema:
+
+-  #### `SchemaName.methods.newMethodName = function(){}` We can add any method on
+   schema by using the function.
+   -  Example:
+      ```js
+      ProductSchema.methods.logger = function () {
+         console.log(`Data saved for ${this.name}`);
+      };
+      ```
+-  #### we can access the function on our `model instance` after save.
+   -  Example:
+   ```js
+   app.post("/api/v1/product", async (req, res, next) => {
+      try {
+         const product = new Product(req.body);
+         // if (product.quantity === 0) {
+         //    product.status = "out-of-stock";
+         // }
+         const results = await product.save();
+         results.logger();
+         res.status(200).send({
+            success: true,
+            message: "Product saved successfully",
+            data: results,
+         });
+      } catch (err) {
+         res.status(400).send({
+            success: false,
+            name: err.name,
+            messsage: err.message,
+         });
+      }
+   });
+   ```

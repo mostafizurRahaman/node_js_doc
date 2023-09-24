@@ -20,6 +20,7 @@
 # Database Design Steps:-
 
 -  Schema Design :
+-  Create a Model
 
 # Scheme Design :
 
@@ -131,3 +132,77 @@ const ProductSchema = mongoose.Schema({});
 | --------------- | ------------------------------------------------ | ----------------- | ---------- | ------------------ |
 | `timestamps`    | by default gettings the created and updatedTimes | `true` or `false` |            | `timestamps: true` |
 | `_id`           | give \_id property or not                        | `true` or `false` |            | `_id: true`        |
+
+# Create a Model :
+
+-  Model name will be start with capital letter.
+-  `mongoose.model("ModelName", SchemaName)` by using this function we can
+   create a model:
+-  Example:
+   ```js
+   const Product = mongoose.model("Product", ProductSchema);
+   ```
+
+# Post operation with Mongoose:
+
+-  we can `post ` to ways in mongoose : `save()` or `create()` method:
+-  ## `save()`: we use save method when we need modified data in server.
+
+   -  create an `instance` from your `model` with `new` keyword.
+      ```js
+      const proudct = new Product(dataObject);
+      const product = new Product(req.body);
+      ```
+   -  then use `instanceName.save() method` . It works asynchronously. so we use
+      `async await`
+   -  After saving data on database `save()` returns the same data.
+   -  Example:
+
+   ```js
+   //  model :
+   const Product = mongoose.model("Product", ProductSchema);
+   app.post("/api/v1/product", async (req, res, next) => {
+      try {
+         const product = new Product(req.body);
+         const results = await product.save();
+         console.log(req.body);
+         res.status(200).send({
+            success: true,
+            message: "Product saved successfully",
+            data: results,
+         });
+      } catch (err) {
+         res.status(400).send({
+            success: false,
+            name: err.name,
+            messsage: err.message,
+         });
+      }
+   });
+
+   module.exports = app;
+   ```
+
+-  ## `Create()`: if you don't need to modify data use `create()`.
+   -  `ModelName.create(dataObject)` : create a documents on database and
+      returns same data to us.
+   -  It's aloso asynchronously so we can use `async await` and `try & catch`
+   -  Example :
+   ```js
+   app.post("/api/v1/product", async (req, res, next) => {
+      try {
+         const results = await Product.create(req.body);
+         res.status(200).send({
+            success: true,
+            message: "product save successfully",
+            data: results,
+         });
+      } catch (err) {
+         res.status(400).send({
+            success: false,
+            message: err.message,
+            name: err.name,
+         });
+      }
+   });
+   ```

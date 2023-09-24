@@ -27,7 +27,7 @@ const ProductSchema = mongoose.Schema(
          required: true,
          min: [0, "price can't be negative"],
       },
-      uint: {
+      unit: {
          type: String,
          required: true,
          enum: {
@@ -67,19 +67,19 @@ const ProductSchema = mongoose.Schema(
       //    type: Date,
       //    default: Date.now,
       // },
-      supplier: {
-         type: mongoose.Schema.Types.ObjectId,
-         ref: "Supplier",
-      },
-      categories: [
-         {
-            name: {
-               type: String,
-               required: true,
-            },
-            _id: mongoose.Schema.Types.ObjectId,
-         },
-      ],
+      // supplier: {
+      //    type: mongoose.Schema.Types.ObjectId,
+      //    ref: "Supplier",
+      // },
+      // categories: [
+      //    {
+      //       name: {
+      //          type: String,
+      //          required: true,
+      //       },
+      //       _id: mongoose.Schema.Types.ObjectId,
+      //    },
+      // ],
    },
    {
       timestamps: true,
@@ -87,8 +87,107 @@ const ProductSchema = mongoose.Schema(
    }
 );
 
+const supplierSchema = mongoose.Schema(
+   {
+      name: {
+         type: String,
+         required: true,
+         unique: true,
+         trim: true,
+         minLength: [3, "Name should be min 3 char"],
+         maxLength: [50, "Name Should be max 50 char"],
+      },
+      address: {
+         up: {
+            type: String,
+            required: true,
+         },
+         postcode: {
+            type: Number,
+            validate: {
+               validator: (value) => {
+                  if (`${value}`.length === 4) {
+                     return true;
+                  } else {
+                     return false;
+                  }
+               },
+               message: "post code must be 4 digits",
+            },
+         },
+         dist: {
+            type: String,
+            required: true,
+         },
+      },
+   },
+   {
+      timestamps: true,
+   }
+);
+
+//  model :
+const Product = mongoose.model("Product", ProductSchema);
+const Supplier = mongoose.model("Supplier", supplierSchema);
 app.get("/", (req, res) => {
    res.send("Route is working! YaY!");
+});
+
+app.post("/api/v1/product", async (req, res, next) => {
+   try {
+      const product = new Product(req.body);
+      if (product.quantity === 0) {
+         product.status = "out-of-stock";
+      }
+      const results = await product.save();
+
+      res.status(200).send({
+         success: true,
+         message: "Product saved successfully",
+         data: results,
+      });
+   } catch (err) {
+      res.status(400).send({
+         success: false,
+         name: err.name,
+         messsage: err.message,
+      });
+   }
+});
+
+// app.post("/api/v1/product", async (req, res, next) => {
+//    try {
+//       const results = await Product.create(req.body);
+//       res.status(200).send({
+//          success: true,
+//          message: "product save successfully",
+//          data: results,
+//       });
+//    } catch (err) {
+//       res.status(400).send({
+//          success: false,
+//          message: err.message,
+//          name: err.name,
+//       });
+//    }
+// });
+
+app.post("/api/v1/supplier", async (req, res, next) => {
+   try {
+      const supplier = new Supplier(req.body);
+      const result = await supplier.save();
+      res.status(200).send({
+         success: true,
+         message: "Supplier saved successfully",
+         data: result,
+      });
+   } catch (err) {
+      res.status(400).send({
+         success: false,
+         message: err.message,
+         name: err.name,
+      });
+   }
 });
 
 module.exports = app;

@@ -279,3 +279,180 @@ const ProductSchema = mongoose.Schema({});
       }
    });
    ```
+
+# Get Data With Mongoose:
+
+-  #### `ModelName.find(queryObject)`:
+
+   ```js
+   app.get("/api/v1/product", async (req, res, next) => {
+      try {
+         const product = await Product.find({
+            _id: "650fd64b85321f25787eb2f4",
+         });
+
+         res.status(200).send({
+            status: "success",
+            message: "Data found successfully",
+            data: product,
+         });
+      } catch (err) {
+         res.status(400).send({
+            status: "failed",
+            message: err.message,
+            name: err.name,
+         });
+      }
+   });
+   ```
+
+-  #### `ModelName.findById("ObjectIdSring")`:
+
+   ```js
+   app.get("/api/v1/product", async (req, res, next) => {
+      try {
+         const product = await Product.findById("650fd64b85321f25787eb2f4");
+
+         res.status(200).send({
+            status: "success",
+            message: "Data found successfully",
+            data: product,
+         });
+      } catch (err) {
+         res.status(400).send({
+            status: "failed",
+            message: err.message,
+            name: err.name,
+         });
+      }
+   });
+
+   module.exports = app;
+   ```
+
+-  #### `ModelName.findOne(filterObject, options)`:
+
+   ```js
+   app.get("/api/v1/product", async (req, res, next) => {
+      try {
+         const product = await Product.findOne({ name: { isexi } });
+
+         res.status(200).send({
+            status: "success",
+            message: "Data found successfully",
+            data: product,
+         });
+      } catch (err) {
+         res.status(400).send({
+            status: "failed",
+            message: err.message,
+            name: err.name,
+         });
+      }
+   });
+
+   module.exports = app;
+   ```
+
+# Query in Mongoose:
+
+-  #### Query like mongoDB :
+   -  Example:
+      ```js
+      const product = await Product.find({ price: { $lt: 100 } })
+         .skip(2)
+         .limit(3)
+         .sort({ price: -1 });
+      ```
+-  #### `Query Chaining with where(propertyname)`:
+   -  Example :
+      ```js
+      const product = await Product.where("quantity")
+         .gte(100)
+         .lt(3000)
+         .where("name")
+         .regex(/ch/)
+         .where("price")
+         .gt(0);
+      ```
+-  #### Projection in Mongoose:
+   -  we can do `projection ` two ways in `mongoose`.
+   -  ##### In `find({}, "propertyName -propertyNmae")` or
+      `findOne({}, "propertyName -propertyNmae")` or
+      `findById({}, "propertyName -propertyNmae")`
+      -  Example:
+      ```js
+      const product = await Product.find(
+         { price: { $lt: 100 } },
+         "-name -quantity"
+      );
+      ```
+   -  ##### `select({propertyName: -1, propertyName: 1})` :
+      -Example:
+      ```js
+      const product = await Product.find({ price: { $lt: 100 } })
+         .select({ quantity: 0 })
+         .skip(2)
+         .limit(3)
+         .sort({ price: -1 });
+      ```
+
+# Update documents with Mongoose:-
+
+-  ## `updateOne(queryObject, updatedDoc, [otions])`:
+
+   -  By using update method we can upadate our any document properties.
+   -  `Bydefault` `Model.udpateOne()` can't validate data.
+   -  pass `{runsValidators: true}` as third parameter to use validation before
+      update.
+   -  Example:
+
+      ```js
+      module.exports.updateProductById = async (req, res, next) => {
+         try {
+            const { id } = req.params;
+            const results = await productservices.updateProductServices(
+               id,
+               req.body
+            );
+
+            res.status(200).send({
+               status: "success",
+               message: "Data successfully udpated",
+               data: results,
+            });
+         } catch (err) {
+            res.status(400).send({
+               success: "failed",
+               message: err.message,
+               name: err.name,
+            });
+         }
+      };
+      ```
+
+   -  ## `save()` by using save method we can update data:
+
+      -  `save()` method automatically validate data .
+      -  At first `find the data by using` `Model.find(query)` or
+         `Model.findByOne(query)` or `Model.findById("ID")` method.
+      -  after find the data.
+      -  just set `data.set(updatedData).save()`
+      -  Example:
+
+      ```js
+      //  udpate by using save() method:
+      module.exports.updateProductServices = async (id, data) => {
+         const product = await Product.findOne({
+            _id: "650fbdb2d8d38a26202ee293",
+         });
+
+         // set the data with product.set(newData)
+         //  and save()
+
+         const results = await product.set(data).save();
+         return results;
+      };
+      ```
+
+   -  ## `findOneAndUpdate()` and `findByIdAndUpdate()` : works like `updateOne()`

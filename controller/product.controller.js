@@ -17,8 +17,26 @@ module.exports.getProducts = async (req, res, next) => {
       // const product = await Product.find({
       //    $and: [{ name: { $regex: /M/ } }, { price: { $gt: 100 } }],
       // });
+      const query = req.query;
+      const queryObject = {};
+      const filter = { ...query };
+      const excludedFields = ["page", "limit", "sort", "select"];
+      excludedFields.forEach((field) => delete filter[field]);
+      if (req?.query?.sort) {
+         const sortBy = req.query.sort.split(",").join(" ");
+         queryObject.sortBy = sortBy;
+      }
 
-      const product = await productservices.getProductService();
+      if (req.query.select) {
+         const select = req.query.select.split(",").join(" ");
+         queryObject.selectBy = select;
+      }
+
+      const product = await productservices.getProductService(
+         filter,
+         queryObject
+      );
+
       res.status(200).send({
          status: "success",
          message: "Data found successfully",
@@ -84,6 +102,52 @@ exports.bulkUpdateProductsByIds = async (req, res, next) => {
          status: "success",
          message: "products udpated successfully by me",
          data: products,
+      });
+   } catch (err) {
+      res.status(400).send({
+         status: "failed",
+         message: err.message,
+         name: err.name,
+      });
+   }
+};
+
+exports.deleteProductById = async (req, res, next) => {
+   try {
+      const { id } = req.params;
+      const product = await productservices.deleteProductServiceById(id);
+      res.status(200).send({
+         status: "success",
+         message: "Product deleted successfuly",
+         data: product,
+      });
+   } catch (err) {
+      res.status(400).send({
+         status: "failed",
+         message: err.message,
+         name: err.name,
+      });
+   }
+};
+
+//  bulk delete Product:
+
+module.exports.bulkDeleteProductByIds = async (req, res, next) => {
+   try {
+      console.log(req.body);
+      const { ids } = req.body;
+      console.log(ids);
+      const results = await productservices.bulkDeleteProductByIdService(ids);
+      if (!results.deletedCount) {
+         return res.status(400).send({
+            status: "failed",
+            message: "product not deleted successfully",
+         });
+      }
+      res.status(200).send({
+         status: "success",
+         message: "products delete successfully",
+         data: results,
       });
    } catch (err) {
       res.status(400).send({

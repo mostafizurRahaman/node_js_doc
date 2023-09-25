@@ -511,3 +511,18 @@ const ProductSchema = mongoose.Schema({});
       return results;
    };
    ```
+
+# Delete Single Product: by using `deleteOne()`
+
+-  `modelName.deleteOne({_id: ids})`
+-  Example:
+
+```js
+module.exports.deleteProductServiceById = async (productId) => {
+   const results = await Product.deleteOne({ _id: productId });
+   return results;
+};
+```
+
+# Bulk Delete Product: by using `model.deleteMany({_id: arrayofIds})`
+ 

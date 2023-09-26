@@ -525,4 +525,95 @@ module.exports.deleteProductServiceById = async (productId) => {
 ```
 
 # Bulk Delete Product: by using `model.deleteMany({_id: arrayofIds})`
- 
+
+# Advance Filtering in Mongoonse :
+
+-  Atfirst pass everying in api url from clientside: like below:
+-  `http://localhost:5000?name=chal&price=48&sort=price,quantity&fields=name,price,quantity,description&limit=5&page=1`
+
+   -  ## Seperate filter to find documents :
+
+      -  At first copy the `req.query` and store `filter` variable.
+
+      ```js
+      const filter = { ...req.query };
+      ```
+
+      -  We need to remove some fields from filter. like `sort` ,` fileds`,
+         `limit`, `page` etc.
+      -  Because `sort` ,` fileds`, `limit`,`page` are not use with filter
+         option.
+
+-  ## Seperate `sort` and `projection` object for flexibility:
+
+   -  create `const queryObject = {}`
+   -  first check `sort` is exits ?
+   -  if exits `split` `req.query.sort` by `comma (,)` and `join(" ")` with
+      empty space and stor into `queryObject.sortBy`
+
+   -  Example:
+
+   ```js
+   const queryObject = {};
+   if (req.query.sort) {
+      queryObject.sortBy = req.query.sort.split(",").join();
+   }
+   ```
+
+   -  then check `fields`, if exits ,`split(",")` `req.query.sort` by `comma(,)`
+      and `join(" ")` with empty space and store into `queryObject.selectionBy`
+
+   -  then `pass` the `queryObject` as parameter of
+      `model.find().sort(queryObject.sortBy).select(queryObject.selectionBy)`
+   -  Controller Part:
+
+   ```js
+   module.exports.getProducts = async (req, res, next) => {
+      try {
+         const query = req.query;
+         const filter = { ...query };
+
+         const queryObject = {};
+         const excludedFields = ["sort", "limit", "page", "fields"];
+         excludedFields.forEach((field) => delete filter[field]);
+
+         if (req.query.sort) {
+            const sortBy = req.query.sort.split(",").join(" ");
+            queryObject.sortBy = sortBy;
+         }
+
+         if (req.query.fields) {
+            const selectionBy = req.query.fields.split(",").join(" ");
+            queryObject.selectionBy = selectionBy;
+         }
+
+         const product = await productservices.getProductService(
+            filter,
+            queryObject
+         );
+         res.status(200).send({
+            status: "success",
+            message: "Data found successfully",
+            data: product,
+         });
+      } catch (err) {
+         res.status(400).send({
+            status: "failed",
+            message: err.message,
+            name: err.name,
+         });
+      }
+   };
+   ```
+
+   -  Services Part :
+
+   ```js
+   module.exports.getProductService = async (filter, queryObject) => {
+      console.log(queryObject.sortBy);
+      const product = await Product.find(filter)
+         .sort(queryObject.sortBy)
+         .select(queryObject.selectionBy);
+      return product;
+   };
+   ```

@@ -18,25 +18,26 @@ module.exports.getProducts = async (req, res, next) => {
       //    $and: [{ name: { $regex: /M/ } }, { price: { $gt: 100 } }],
       // });
       const query = req.query;
-      const queryObject = {};
       const filter = { ...query };
-      const excludedFields = ["page", "limit", "sort", "select"];
+
+      const queryObject = {};
+      const excludedFields = ["sort", "limit", "page", "fields"];
       excludedFields.forEach((field) => delete filter[field]);
-      if (req?.query?.sort) {
+
+      if (req.query.sort) {
          const sortBy = req.query.sort.split(",").join(" ");
          queryObject.sortBy = sortBy;
       }
 
-      if (req.query.select) {
-         const select = req.query.select.split(",").join(" ");
-         queryObject.selectBy = select;
+      if (req.query.fields) {
+         const selectionBy = req.query.fields.split(",").join(" ");
+         queryObject.selectionBy = selectionBy;
       }
 
       const product = await productservices.getProductService(
          filter,
          queryObject
       );
-
       res.status(200).send({
          status: "success",
          message: "Data found successfully",

@@ -23,14 +23,11 @@ module.exports.getProducts = async (req, res, next) => {
       const queryObject = {};
       const excludedFields = ["sort", "limit", "page", "fields"];
       excludedFields.forEach((field) => delete filter[field]);
-      const filterStrigify = JSON.stringify(filter);
-      filter = JSON.parse(
-         filterStrigify.replace(
-            /\b(gt|lt|gte|lte|eq|ne)\b/g,
-            (match) => `$${match}`
-         )
+      const filterString = JSON.stringify(filter).replace(
+         /\b(gt|gte|lt|lte|eq|ne)\b/,
+         (match) => `$${match}`
       );
-
+      filter = JSON.parse(filterString);
       console.log(filter);
       if (req.query.sort) {
          const sortBy = req.query.sort.split(",").join(" ");

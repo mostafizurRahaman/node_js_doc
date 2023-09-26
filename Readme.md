@@ -664,6 +664,15 @@ module.exports.deleteProductServiceById = async (productId) => {
       ```
 
       -  the `replace(regex, callback(match))` mathod get a `callback function `
+      -  so if any operator match with can return the operator with `$operator`
+
+      ```js
+      filterStrigify.replace(
+         /\b(gt|lt|gte|lte|eq|ne)\b/g,
+         (match) => `$${match}`
+      );
+      ```
+
       -  Example :
 
       ```js
@@ -712,3 +721,95 @@ module.exports.deleteProductServiceById = async (productId) => {
          }
       };
       ```
+
+# Pagination in Mongoose :
+
+-  ##### pass `limit` and `page` on query from client side :
+
+   ```js
+      http://localhost:5000?page=1&limit=5
+   ```
+
+-  ##### In Backend Controller function :
+
+   -  check in `req.query` `page` exist ?
+   -  if exist distructure the `page` and `limit` from `req.query`;
+   -  set a default value for `page` and `limit` property. if page or limit
+      don't exist on client side . the default value will applicable.
+
+   ```js
+   if (req.query.page) {
+      const { page = 1, limit = 10 } = req.query;
+   }
+   ```
+
+   -  then calculate, how many data need to `skip` :
+      `skip = (page -1) * (limit *1)`
+   -  -  Add limit and skip to `queryObject`. `queryObject.skip = skip` &
+         `queryObject.limit = limit`
+
+   ```js
+   - And convert the limit to string to number
+   if (req.query.page) {
+      let { page = 1, limit = 10 } = req.query;
+      const skip = (page - 1) * (limit * 1);
+      limit = parseInt(limit);
+      queryObject.skip = skip;
+      queryObject.limit= limit;
+   }
+   ```
+
+   -  Then pass the queryObject to `service part function`
+
+   ```js
+   module.exports.getProducts = async (req, res, next) => {
+      try {
+         const query = req.query;
+         const filter = { ...query };
+         const queryObject = {};
+         const excludedFields = ["limit", "page", "sort"];
+
+         excludedFields.forEach((field) => delete filter[field]);
+
+         if (req.query.page) {
+            let { page = 1, limit = 3 } = req.query;
+            const skip = (page - 1) * (limit * 1);
+            limit = parseInt(limit);
+            queryObject.skip = skip;
+            queryObject.limit = limit;
+         }
+
+         const products = await getProductService(filter, queryObject);
+         res.status(200).send({
+            status: "success",
+            message: "Data Found Successfully",
+            data: products,
+         });
+      } catch (err) {
+         res.status(400).send({
+            status: "failed",
+            message: err.message,
+            name: err.name,
+         });
+      }
+   };
+
+   ``;
+   ```
+
+-  ##### Services Part function :
+
+   -  Access the `queyObject` from parameter.
+   -  then apply queryObject on `skip(queryObject.skip)` and
+      `skip(queryObject.limit)` method `after find documents`
+   -  Example :
+
+   ```js
+   module.exports.getProductService = async (filter, queryObject) => {
+      console.log(queryObject.sortBy);
+      const product = await Product.find(filter)
+         .sort(queryObject.sortBy)
+         .select(queryObject.selectionBy);
+      return product;
+   };
+   ```

@@ -543,6 +543,27 @@ module.exports.deleteProductServiceById = async (productId) => {
          `limit`, `page` etc.
       -  Because `sort` ,` fileds`, `limit`,`page` are not use with filter
          option.
+      -  declare an `array` and `store` the fileds which need to remove.
+
+      ```js
+      const excludedFields = ["sort", "fields", "limit", "page"];
+      ```
+
+      -  then apply a `forEach` `loop` on `excludedFields` and delete properties
+         from `filter`;
+
+      ```js
+      excludedFields.forEach((field) => delete filter[field]);
+      ```
+
+      -  the pass the `filter` on find method:
+
+      ```js
+      module.exports.getProductService = async (filter) => {
+         const product = await Product.find(filter);
+         return product;
+      };
+      ```
 
 -  ## Seperate `sort` and `projection` object for flexibility:
 
@@ -617,3 +638,77 @@ module.exports.deleteProductServiceById = async (productId) => {
       return product;
    };
    ```
+
+   -  ## Advance Filtering with Operator :
+
+      -  After queryName and before = use `[operator]` in baracket from client
+         side ap query: like: `http:localost:5000?price[gt]=100`
+      -  In backend : we can access the query with `req.query`;
+      -  the results look like `{price : {gt: 100}}`
+      -  But before `operatorName` we need to add `$` sign.
+      -  So we can copy the `req.query ` to `filter`
+
+         ```js
+         const filter = { ...req.query };
+         ```
+
+      -  convert the filter to String by JSON.strigify(filter) and store a
+         variable.
+
+      -  the use replace method of string. if any operator found replace the
+         operator with $operator.
+      -  use the this regex :
+
+      ```regex
+         /\b(gt|gte|lt|lte|eq|ne)\b/g
+      ```
+
+      -  the `replace(regex, callback(match))` mathod get a `callback function `
+      -  Example :
+
+      ```js
+      module.exports.getProducts = async (req, res, next) => {
+         try {
+            const query = req.query;
+            let filter = { ...query };
+
+            const queryObject = {};
+            const excludedFields = ["sort", "limit", "page", "fields"];
+            excludedFields.forEach((field) => delete filter[field]);
+            const filterStrigify = JSON.stringify(filter);
+            filter = JSON.parse(
+               filterStrigify.replace(
+                  /\b(gt|lt|gte|lte|eq|ne)\b/g,
+                  (match) => `$${match}`
+               )
+            );
+
+            console.log(filter);
+            if (req.query.sort) {
+               const sortBy = req.query.sort.split(",").join(" ");
+               queryObject.sortBy = sortBy;
+            }
+
+            if (req.query.fields) {
+               const selectionBy = req.query.fields.split(",").join(" ");
+               queryObject.selectionBy = selectionBy;
+            }
+
+            const product = await productservices.getProductService(
+               filter,
+               queryObject
+            );
+            res.status(200).send({
+               status: "success",
+               message: "Data found successfully",
+               data: product,
+            });
+         } catch (err) {
+            res.status(400).send({
+               status: "failed",
+               message: err.message,
+               name: err.name,
+            });
+         }
+      };
+      ```

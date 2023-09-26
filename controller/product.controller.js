@@ -18,12 +18,20 @@ module.exports.getProducts = async (req, res, next) => {
       //    $and: [{ name: { $regex: /M/ } }, { price: { $gt: 100 } }],
       // });
       const query = req.query;
-      const filter = { ...query };
+      let filter = { ...query };
 
       const queryObject = {};
       const excludedFields = ["sort", "limit", "page", "fields"];
       excludedFields.forEach((field) => delete filter[field]);
+      const filterStrigify = JSON.stringify(filter);
+      filter = JSON.parse(
+         filterStrigify.replace(
+            /\b(gt|lt|gte|lte|eq|ne)\b/g,
+            (match) => `$${match}`
+         )
+      );
 
+      console.log(filter);
       if (req.query.sort) {
          const sortBy = req.query.sort.split(",").join(" ");
          queryObject.sortBy = sortBy;

@@ -39,6 +39,12 @@ module.exports.getProducts = async (req, res, next) => {
          queryObject.selectionBy = selectionBy;
       }
 
+      if (req.query.page) {
+         let { page = 1, limit = 10 } = req.query;
+         queryObject.skip = (page - 1) * (limit * 1);
+         queryObject.limit = limit * 1;
+      }
+
       const product = await productservices.getProductService(
          filter,
          queryObject

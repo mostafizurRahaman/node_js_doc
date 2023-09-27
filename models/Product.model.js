@@ -1,102 +1,88 @@
 const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema.Types;
+const validator = require("validator");
 
-//  schema design :
-const ProductSchema = mongoose.Schema(
+const productSchema = mongoose.Schema(
    {
       name: {
          type: String,
-         required: [true, "Products name is required"],
          trim: true,
-         unique: [true, "Every Products name will be unique"],
-         minLength: [3, "Products name min length should be 3 digits "],
-         maxLength: [20, "Name is too large"],
+         requird: [true, "Please provide a product name"],
+         unique: true,
+         lowercase: true,
+         minLength: [3, "Name should be min 3 charcter"],
+         maxLength: [100, "Name should be max 100 character"],
       },
       description: {
          type: String,
          required: true,
       },
-      price: {
-         type: Number,
-         required: true,
-         min: [0, "price can't be negative"],
-      },
       unit: {
          type: String,
          required: true,
          enum: {
-            values: ["kg", "litre", "pcs"],
-            mesasge: "uint couldn't be {VALUE}, uint will be kg/litre/pcs",
+            values: ["kg", "litre", "pcs", "bag"],
+            message: "{VALUE} is a valid unit.Unit will be kg/litre/pcs/bag",
          },
       },
-      quantity: {
-         type: Number,
-         required: true,
-         min: 0,
-         validate: {
-            validator: (value) => {
-               const isInteger = Number.isInteger(value);
-               if (isInteger) {
-                  return true;
-               } else {
-                  return false;
-               }
+      imageURLs: [
+         {
+            type: String,
+            required: true,
+            validate: {
+               validator: (value) => {
+                  if (!Array.isArray(value)) {
+                     return false;
+                  }
+                  const isValid = true;
+                  value.forEach((url) => {
+                     if (!validator.isURL(url)) {
+                        isValid = false;
+                     }
+                  });
+                  return isValid;
+               },
             },
          },
-         message: "quantity shouldn't be {VALUE}, quyantity will be a number",
-      },
-      status: {
+      ],
+      category: {
          type: String,
          required: true,
-         enum: {
-            values: ["in-stock", "out-of-stock", "discontinued"],
-            message: "quantity shouldn't be {VALUE}",
+      },
+      brand: {
+         name: {
+            type: String,
+            required: true,
+         },
+         id: {
+            type: ObjectId,
+            ref: "Brand",
+            required: true,
          },
       },
-      // createdBy: {
-      //    type: Date,
-      //    default: Date.now,
-      // },
-      // updatedBy: {
-      //    type: Date,
-      //    default: Date.now,
-      // },
-      // supplier: {
-      //    type: mongoose.Schema.Types.ObjectId,
-      //    ref: "Supplier",
-      // },
-      // categories: [
-      //    {
-      //       name: {
-      //          type: String,
-      //          required: true,
-      //       },
-      //       _id: mongoose.Schema.Types.ObjectId,
-      //    },
-      // ],
    },
    {
       timestamps: true,
-      _id: true,
    }
 );
 
-ProductSchema.pre("save", function (next) {
-   if (!this.quantity) {
-      this.status = "out-of-stock";
-   }
-   console.log("Before saved product", " ", this.name);
-   next();
-});
+// productSchema.pre("save", function (next) {
+//    if (!this.quantity) {
+//       this.status = "out-of-stock";
+//    }
+//    console.log("Before saved product", " ", this.name);
+//    next();
+// });
 
-ProductSchema.post("save", function (doc, next) {
-   console.log(`Product saved for ${doc._id}`);
-   next();
-});
+// productSchema.post("save", function (doc, next) {
+//    console.log(`Product saved for ${doc._id}`);
+//    next();
+// });
 
-ProductSchema.methods.logger = function () {
-   console.log(`Data saved for ${this.name}`);
-};
+// productSchema.methods.logger = function () {
+//    console.log(`Data saved for ${this.name}`);
+// };
 
-const Product = mongoose.model("Product", ProductSchema);
+const Product = mongoose.model("Product", productSchema);
 
 module.exports = Product;

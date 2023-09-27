@@ -96,6 +96,7 @@ module.exports.updateCategoryById = async (req, res, next) => {
       });
    }
 };
+
 module.exports.deleteCategoryById = async (req, res, next) => {
    try {
       const { id } = req.params;

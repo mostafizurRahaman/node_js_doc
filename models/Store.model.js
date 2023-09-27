@@ -7,6 +7,9 @@ const storeSchema = mongoose.Schema(
       name: {
          type: String,
          required: [true, "Please provide a valid store name"],
+         lowercase: true,
+         trim: true,
+         unique: true,
          enum: {
             values: [
                "dhaka",
@@ -28,6 +31,7 @@ const storeSchema = mongoose.Schema(
             values: ["active", "in-active"],
             message: "Status couldn't be  {VALUE}, status is active/in-active",
          },
+         default: "active",
       },
       manager: {
          name: String,
@@ -45,4 +49,4 @@ const storeSchema = mongoose.Schema(
 
 const Store = mongoose.model("Store", storeSchema);
 
-exports = Store;
+module.exports = Store;

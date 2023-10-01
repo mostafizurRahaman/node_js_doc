@@ -1,3 +1,4 @@
+const Brand = require("../models/Brand.model");
 const Product = require("../models/Product.model");
 
 module.exports.getProductService = async (filter, queryObject) => {
@@ -17,7 +18,21 @@ module.exports.getProductService = async (filter, queryObject) => {
 module.exports.saveProductService = async (data) => {
    const product = new Product(data);
    const results = await product.save();
-   return results;
+   // results.logger();
+   //  get product id and brand details:
+   const { _id: productId, brand } = results;
+   // update brand product:
+   const brandProduct = await Brand.updateOne(
+      { _id: brand.id },
+      { $push: { products: productId } },
+      {
+         runValidators: true,
+      }
+   );
+
+   if (brandProduct.nModified) {
+      return results;
+   }
 };
 /**
  *  @udpatedByOne

@@ -24,6 +24,6 @@ module.exports.updateStoreByIdService = async (id, data) => {
 };
 
 module.exports.deleteStoreByIdService = async (id) => {
-   const result = await Store.updateOne({ _id: id });
+   const result = await Store.deleteOne({ _id: id });
    return result;
 };

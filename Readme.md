@@ -793,8 +793,6 @@ module.exports.deleteProductServiceById = async (productId) => {
          });
       }
    };
-nd
-   ``;
    ```
 
 -  ##### Services Part function :
@@ -813,3 +811,37 @@ nd
       return product;
    };
    ```
+
+# Populate In mongoose :
+
+-  Suppose we have two collection products and brands. Every brand have some
+   products. Every product contain brand id and every brand contain it's product
+   id.
+-  So When we post the `product` we need to `update` the` brand collection`
+   also. We can push the `productId` to `brand.products` property
+-  Example Product Post:
+
+```js
+   module.exports.saveProductService = async (data) => {
+      const product = new Product(data);
+      const results = await product.save();
+      // results.logger();
+      //  get product id and brand details:
+      const { _id: productId, brand } = results;
+      // update brand product:
+      const brandProduct = await Brand.updateOne(
+         { _id: brand.id },
+         { $push: { products: productId } },
+         {
+            runValidators: true,
+         }
+      );
+
+      if (brandProduct.nModified) {
+         return results;
+      }
+   };
+```
+
+-  Then go the `brand` route and `populate` the `products` property by using
+   `.populate('products') `

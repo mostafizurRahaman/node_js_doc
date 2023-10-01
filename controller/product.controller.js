@@ -1,3 +1,4 @@
+const Brand = require("../models/Brand.model");
 const productservices = require("./../services/product.services");
 module.exports.getProducts = async (req, res, next) => {
    try {
@@ -66,7 +67,8 @@ module.exports.getProducts = async (req, res, next) => {
 module.exports.saveProduct = async (req, res, next) => {
    try {
       const results = await productservices.saveProductService(req.body);
-      results.logger();
+      // results.logger();
+
       res.status(200).send({
          success: true,
          message: "Product saved successfully",

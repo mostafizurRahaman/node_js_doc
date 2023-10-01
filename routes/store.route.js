@@ -10,6 +10,6 @@ router
 router
    .route("/:id")
    .get(storeController.getStoreById)
-//    .patch(storeController.updateStoreById)
-//    .delete(storeController.deleteStoreById);
+   .patch(storeController.updateStoreById)
+   .delete(storeController.deleteStoreById);
 module.exports = router;

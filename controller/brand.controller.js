@@ -26,7 +26,7 @@ module.exports.getBrands = async (req, res, next) => {
       const results = await getBrandService();
       res.status(200).send({
          status: "success",
-         message: "Brand Created Successfully",
+         message: "Products found successfully",
          data: results,
       });
    } catch (err) {

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const { validate } = require("./Brand.model");
 const { ObjectId } = mongoose.Schema.Types;
 
 const supplierSchema = mongoose.Schema(
@@ -87,11 +86,11 @@ const supplierSchema = mongoose.Schema(
       },
       imageUrl: {
          type: String,
-         validate: [validate.isURL, "please provide a valid url"],
+         validate: [validator.isURL, "please provide a valid url"],
       },
       nationalIdCardImageUrl: {
          type: String,
-         validate: [validate.isURL, "please provide a valid url"],
+         validate: [validator.isURL, "please provide a valid url"],
       },
       status: {
          type: String,
@@ -111,7 +110,7 @@ supplierSchema.pre("save", function (next) {
    console.log(this.name, "Ready to post ");
    next();
 });
-supplierSchema.post("save", function (next) {
+supplierSchema.post("save", function (doc,next) {
    console.log(doc.name, "posted successfully");
    next();
 });

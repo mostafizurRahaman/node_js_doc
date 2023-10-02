@@ -15,3 +15,15 @@ module.exports.getSupplierByIdService = async (id) => {
    const supplier = await Supplier.findById(id);
    return supplier;
 };
+
+module.exports.updateSupplierByIdService = async (id, data) => {
+   const supplier = await Supplier.updateOne({ _id: id }, data, {
+      runValidators: true,
+   });
+   return supplier;
+};
+
+module.exports.deleteSupplierByIdService = async (id, data) => {
+   const supplier = await Supplier.deleteOne({ _id: id });
+   return supplier;
+};

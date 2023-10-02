@@ -1,4 +1,4 @@
-const Category = require("../models/CategorySchema");
+const Category = require("../models/Category.model");
 
 module.exports.getCategoryService = async () => {
    const categories = await Category.find({});
@@ -28,5 +28,3 @@ module.exports.deleteCategoryByIdService = async (id) => {
    console.log(result);
    return result;
 };
-
-

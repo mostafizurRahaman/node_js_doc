@@ -9,9 +9,8 @@ const uploader = multer({ dest: "images/" });
 const storage = multer.diskStorage({
    destination: "images/",
    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      const fileName = uniqueSuffix + "_" + file.originalname;
-      cb(null, fileName);
+      const uniqueSuffix = Date.now() + "_" + Math.round(Math.random() * 1e9);
+      cb(null, uniqueSuffix + "_" + file.originalname);
    },
 });
 
@@ -23,13 +22,12 @@ const uploader = multer({
       if (supported.test(extension)) {
          cb(null, true);
       } else {
-         cb(new Error("File extension not matched"));
+         cb(null);
       }
    },
    limits: {
-      fileSize: 50000000,
+      fileSize: 1000000,
    },
 });
 
-//  export uploader
 module.exports = uploader;

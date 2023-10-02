@@ -1,5 +1,6 @@
 const Brand = require("../models/Brand.model");
 const productservices = require("./../services/product.services");
+
 module.exports.getProducts = async (req, res, next) => {
    try {
       // const product = await Product.find({ price: { $lt: 100 } })
@@ -163,6 +164,19 @@ module.exports.bulkDeleteProductByIds = async (req, res, next) => {
          message: "products delete successfully",
          data: results,
       });
+   } catch (err) {
+      res.status(400).send({
+         status: "failed",
+         message: err.message,
+         name: err.name,
+      });
+   }
+};
+
+//  file upload controller :
+module.exports.fileUpload = async (req, res, next) => {
+   try {
+      res.status(200).send(req.file);
    } catch (err) {
       res.status(400).send({
          status: "failed",

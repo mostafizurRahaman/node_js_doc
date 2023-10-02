@@ -822,26 +822,134 @@ module.exports.deleteProductServiceById = async (productId) => {
 -  Example Product Post:
 
 ```js
-   module.exports.saveProductService = async (data) => {
-      const product = new Product(data);
-      const results = await product.save();
-      // results.logger();
-      //  get product id and brand details:
-      const { _id: productId, brand } = results;
-      // update brand product:
-      const brandProduct = await Brand.updateOne(
-         { _id: brand.id },
-         { $push: { products: productId } },
-         {
-            runValidators: true,
-         }
-      );
-
-      if (brandProduct.nModified) {
-         return results;
+module.exports.saveProductService = async (data) => {
+   const product = new Product(data);
+   const results = await product.save();
+   // results.logger();
+   //  get product id and brand details:
+   const { _id: productId, brand } = results;
+   // update brand product:
+   const brandProduct = await Brand.updateOne(
+      { _id: brand.id },
+      { $push: { products: productId } },
+      {
+         runValidators: true,
       }
-   };
+   );
+
+   if (brandProduct.nModified) {
+      return results;
+   }
+};
 ```
 
 -  Then go the `brand` route and `populate` the `products` property by using
    `.populate('products') `
+
+# File Upload By Using multer:
+
+-  #### Simple upload with multer:
+
+   -  create a `uploader` from `multer` and `export` it. `uploader` is an
+      `middleware`.
+
+   ```js
+   //  require multer :
+   const multer = require("multer");
+
+   //  create uploader middleware:  dest means destination location
+   const uploader = multer({ dest: "images/" });
+
+   //  export uploader
+   module.exports = uploader;
+   ```
+
+   -  create an api route to upload file :
+   -  pass the `uploader middleware ` before `controller function` :
+
+   ```js
+   router.post(
+      "/file-upload",
+      uploader.single("image"),
+      productController.fileUpload
+   );
+   ```
+
+   -  create a controller function to send response :
+
+   ```js
+   module.exports.fileUpload = async (req, res, next) => {
+      try {
+         res.status(200).send(req.file);
+      } catch (err) {
+         res.status(400).send({
+            status: "failed",
+            message: err.message,
+            name: err.name,
+         });
+      }
+   };
+   ```
+
+-  #### Image upload with filename and extension :
+
+   -  Add some configuration on `uploader` : like `storage`, `fileFilter`,
+      `limits`
+   -  ###### `storage` create a storage and `and pass as property`.
+
+      -  to create storage call the
+         `multer.diskStorage({ destination: 'pathname/', filename: (req,file,cb) => {}})`
+      -  Example:
+
+      ```js
+      const storage = multer.diskStorage({
+         destination: "images/",
+         filename: (req, file, cb) => {
+            const uniqueSuffix =
+               Date.now() + "-" + Math.round(Math.random() * 1e9);
+            const fileName = uniqueSuffix + "_" + file.originalname;
+            cb(null, fileName);
+         },
+      });
+      ```
+
+   -  ###### `total code ` Example:
+
+   ```js
+   //  require multer :
+   const multer = require("multer");
+   const path = require("path");
+
+   /* //  create uploader middleware:  dest means destination location
+        const uploader = multer({ dest: "images/" });
+        */
+
+   const storage = multer.diskStorage({
+      destination: "images/",
+      filename: (req, file, cb) => {
+         const uniqueSuffix =
+            Date.now() + "-" + Math.round(Math.random() * 1e9);
+         const fileName = uniqueSuffix + "_" + file.originalname;
+         cb(null, fileName);
+      },
+   });
+
+   const uploader = multer({
+      storage: storage,
+      fileFilter: (req, file, cb) => {
+         const supported = /png|jpg|jpeg/;
+         const extension = path.extname(file.originalname);
+         if (supported.test(extension)) {
+            cb(null, true);
+         } else {
+            cb(new Error("File extension not matched"));
+         }
+      },
+      limits: {
+         fileSize: 50000000,
+      },
+   });
+
+   //  export uploader
+   module.exports = uploader;
+   ```

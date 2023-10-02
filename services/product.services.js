@@ -94,3 +94,15 @@ module.exports.bulkDeleteProductByIdService = async (productIds) => {
    const results = await Product.deleteMany({ _id: productIds });
    return results;
 };
+
+module.exports.fileUpload = async (req, res, next) => {
+   try {
+      res.status(200).send(req.file);
+   } catch (err) {
+      res.status(400).send({
+         status: "failed",
+         message: err.message,
+         name: err.name,
+      });
+   }
+};
